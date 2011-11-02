@@ -149,6 +149,20 @@ APP.router = (function() {
 				}
 			}
 
+		},
+
+		goTo : function(uri,title) {
+			if (Modernizr.history && o.useHistory) {
+				title = title || uri;
+				var stateObj = {
+					title : title,
+					url   : uri
+				};
+	  			window.history.pushState(stateObj, title, uri);
+			} else if (o.useHash) {
+				window.location.hash = uri;
+			}
+			o.handleUriChange(uri);
 		}
 
 	};
