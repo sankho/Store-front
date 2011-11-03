@@ -6,7 +6,7 @@ APP.baseModel = function() {
 
     var namespace = APP.namespace;
 
-    this.save = function() {
+    this.save = function(callback) {
         if (this.doc) {
             var collection = APP.clientDB.getCollection(this.collection);
 
@@ -20,7 +20,7 @@ APP.baseModel = function() {
 
             APP.collections[this.collection][this.doc._id] = this.doc;
 
-            APP.publish('doc-save',[this.doc,this.collection]);
+            APP.publish('doc-save',[this.doc,this.collection,callback]);
         }
     }
 
@@ -37,6 +37,12 @@ APP.baseModel = function() {
 
     this.find = function(args) {
         // collection search.
+    }
+
+    this.findOnServer = function(args,callback) {
+        APP.publish('find-on-server',[args,this.collection,function(docs) {
+            typeof callback === 'function' ? callback(docs) : '';
+        }]);
     }
 
 };

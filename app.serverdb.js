@@ -4,7 +4,7 @@ APP.serverDB = (function() {
     
     var domain = '/';
 
-    function upsertDoc(doc,collection) {
+    function upsertDoc(doc,collection,callback) {
         var uri = 'upsert';
 
         $.ajax({
@@ -20,6 +20,7 @@ APP.serverDB = (function() {
                     APP.collections[collection][doc._id]._id = data.doc._id;
                     APP.clientDB.saveCollection(collection);
                     APP.publish('server-upsert',[data.doc,doc]);
+                    typeof callback === 'function' ? callback() : null;
                 }
             }
         });
@@ -50,16 +51,34 @@ APP.serverDB = (function() {
         var uri = 'sync';
     }
 
+    function findOnServer(args,collection,callback) {
+        var uri = 'find';
+        
+        $.ajax({
+            url : domain + uri,
+            type : 'post',
+            data : {
+                args       : args,
+                collection : collection
+            },
+            success : function(data) {
+                callback(data.doc);
+            }
+        });
+    }
+
     return {
         init : function() {
             /** subscribe to internal events **/
-            APP.subscribe('doc-save',function(doc,collection) {
-                upsertDoc(doc,collection);
+            APP.subscribe('doc-save',function(doc,collection,callback) {
+                upsertDoc(doc,collection,callback);
             });
         
             APP.subscribe('doc-remove',function(doc_id,collection) {
                 removeDoc(doc_id,collection);
             });
+
+            APP.subscribe('find-on-server', findOnServer);
         }
     };
 
