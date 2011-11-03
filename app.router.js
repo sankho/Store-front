@@ -38,7 +38,7 @@ APP.router = (function() {
 			$guts.toggleClass('invisible');
 			setTimeout(function() {
 				var routes = o.routes;
-				var route  = routes[uri];
+				var route  = routes[uri.replace('/','').replace('#','')];
 				
 				if (!route) {
 					var route = routes.default;
