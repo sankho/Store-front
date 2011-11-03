@@ -21,11 +21,16 @@ APP.router = (function() {
 	};
 
 	var htmlCache = {},
-	$guts, o;
+	$guts, o, _uri;
 
 	function shuffle(v){
 	    for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
     	return v;
+	}
+
+	function _handleUriChange(uri) {
+		_uri = uri;
+		defaults.handleUriChange(uri);
 	}
 
 	defaults.handleUriChange = function(uri) {
@@ -95,7 +100,7 @@ APP.router = (function() {
 			};
 	
   			window.history.pushState(stateObj, title, uri);
-			o.handleUriChange(uri);
+			_handleUriChange(uri);
   		}
 	}
 
@@ -104,7 +109,7 @@ APP.router = (function() {
 		var uri = window.location.pathname;
 		if (e.state) {
 			// load the content
-			o.handleUriChange(uri);
+			_handleUriChange(uri);
 		} else {
 			var stateObj = {
 				title : document.title,
@@ -118,7 +123,7 @@ APP.router = (function() {
 		e.preventDefault();
 		var uri = $(this).attr('href');
 		window.location.hash = uri;
-		o.handleUriChange(uri);
+		_handleUriChange(uri);
 	}
 
 	return {
@@ -135,14 +140,14 @@ APP.router = (function() {
 					$scope.delegate(o.link, 'click', pushStateOnClick);
 					window.addEventListener('popstate', handlePopState);
 					if (o.loadOnLoad) {
-						o.handleUriChange(window.location.pathname);
+						_handleUriChange(window.location.pathname);
 					}
 				} else if (o.useHash) {
 					$guts.empty();
 					if (window.location.pathname !== '/') {
 						window.location.href = '/#' + window.location.pathname;
 					} else {
-						o.handleUriChange(window.location.hash.replace('#',''));
+						_handleUriChange(window.location.hash.replace('#',''));
 						$guts.show();
 						$scope.delegate(o.link, 'click', hashChange);
 					}
@@ -162,6 +167,11 @@ APP.router = (function() {
 			} else if (o.useHash) {
 				window.location.hash = uri;
 			}
+			_handleUriChange(uri);
+		},
+
+		getUri : function() {
+			return _uri;
 			o.handleUriChange(uri);
 		}
 
