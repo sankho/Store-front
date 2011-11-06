@@ -29,6 +29,11 @@ APP.router = (function() {
 	}
 
 	function _handleUriChange(uri) {
+		var uriLen = uri.length-1;
+		if (uri.charAt(uriLen) === '/' && uriLen !== 0) {
+			uri = uri.slice(0,uriLen);
+		}
+
 		_uri = uri;
 		defaults.handleUriChange(uri);
 	}
