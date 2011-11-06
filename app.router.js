@@ -35,34 +35,41 @@ APP.router = (function() {
 		}
 
 		_uri = uri;
-		defaults.handleUriChange(uri);
+		
+		var routes = o.routes;
+		var route  = routes[uri.replace('/','').replace('#','')];
+		
+		if (!route) {
+			var route = routes.default;
+			route.tmpl = uri !== '/' ? uri.replace('/','') : o.defaultHome;
+		} else {
+			route = $.extend(routes.default,route);
+		}
+		
+		if (route.preLoad) {
+			route.preLoad(function(data) {
+				o.handleUriChange(uri,route,data);
+			});
+		} else {
+			o.handleUriChange(uri,route);
+		}
 	}
 
-	defaults.handleUriChange = function(uri) {
+	defaults.handleUriChange = function(uri,route,data) {
 		if (uri) {
 			$guts.toggleClass('invisible');
 			setTimeout(function() {
-				var routes = o.routes;
-				var route  = routes[uri.replace('/','').replace('#','')];
-				
-				if (!route) {
-					var route = routes.default;
-					route.tmpl = uri !== '/' ? uri.replace('/','') : o.defaultHome;
-				} else {
-					route = $.extend(routes.default,route);
-				}
-		
 				var html = htmlCache[uri];
 				
 				if (html) {
-					insertTemplate(html,{},route.callback);
+					insertTemplate(html,data,route.callback);
 				} else {
 					var url = [o.dir, route.tmpl, o.ext].join('');
 					$.ajax({
 						url : url,
-						success : function(data) {
-							htmlCache[uri] = html = data;
-							insertTemplate(html,{},route.callback);
+						success : function(html) {
+							htmlCache[uri] = html;
+							insertTemplate(html,data,route.callback);
 						},
 						error : function() {
 							$guts.empty().toggleClass('invisible');
