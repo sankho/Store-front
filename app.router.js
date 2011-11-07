@@ -29,6 +29,8 @@ APP.router = (function() {
 	}
 
 	function _handleUriChange(uri) {
+		uri = uri.split('?')[0];
+
 		var uriLen = uri.length-1;
 		if (uri.charAt(uriLen) === '/' && uriLen !== 0) {
 			uri = uri.slice(0,uriLen);
@@ -37,13 +39,13 @@ APP.router = (function() {
 		_uri = uri;
 		
 		var routes = o.routes;
-		var route  = routes[uri.replace('/','').replace('#','')];
+		var route  = routes[uri.replace('/', '').replace('#', '')];
 		
 		if (!route) {
 			var route = routes.default;
-			route.tmpl = uri !== '/' ? uri.replace('/','') : o.defaultHome;
+			route.tmpl = uri !== '/' ? uri.replace('/', '') : o.defaultHome;
 		} else {
-			route = $.extend(routes.default,route);
+			route = $.extend({}, routes.default, route);
 		}
 		
 		if (route.preLoad) {

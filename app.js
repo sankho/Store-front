@@ -18,6 +18,12 @@ var APP = (function(config) {
 		return api;
 	}
 
+	api.getParam = function(name) {
+	    return decodeURI(
+	        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+	    );
+	}
+
 	/*	
 	
 		jQuery pub/sub plugin by Peter Higgins (dante@dojotoolkit.org)
