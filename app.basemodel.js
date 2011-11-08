@@ -29,10 +29,21 @@ APP.baseModel = function() {
         APP.publish('doc-remove',[this.doc._id,this.collection]);
     }
 
-    this.getById = function(_id) {
-        var collection = APP.collections[this.collection];
-        this.doc = collection[_id];
-        return this;
+    this.getById = function(_id,callback) {
+        var self       = this;
+        var collection = APP.collections[self.collection];
+        if (collection && collection[_id]) {
+            self.doc = collection[_id];
+            return typeof callback === 'function' ? callback(self) : self;
+        } else if (APP.serverDB.inited) {
+            APP.serverDB.getByIdOnServer(_id,self.collection,function(doc) {
+                self.doc = doc;
+                var collection = APP.clientDB.getCollection(self.collection);
+                collection[_id] = doc;
+                APP.clientDB.saveCollection(self.collection);
+                return typeof callback === 'function' ? callback(self) : self;
+            });
+        }
     }
 
     this.find = function(args) {
@@ -40,6 +51,7 @@ APP.baseModel = function() {
     }
 
     this.findOnServer = function(args,callback) {
+        console.log(args,this.collection)
         APP.publish('find-on-server',[args,this.collection,function(docs) {
             typeof callback === 'function' ? callback(docs) : '';
         }]);

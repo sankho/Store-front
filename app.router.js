@@ -21,7 +21,7 @@ APP.router = (function() {
 	};
 
 	var htmlCache = {},
-	$guts, o, _uri;
+	$guts, o, _uri, exitCallback;
 
 	function shuffle(v){
 	    for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
@@ -48,6 +48,16 @@ APP.router = (function() {
 			route = $.extend({}, routes.default, route);
 		}
 		
+		if (typeof exitCallback === 'function') {
+			exitCallback();
+		}
+
+		if (route.exit) {
+			exitCallback = route.exit;
+		} else {
+			exitCallback = false;
+		}
+
 		if (route.preLoad) {
 			route.preLoad(function(data) {
 				o.handleUriChange(uri,route,data);

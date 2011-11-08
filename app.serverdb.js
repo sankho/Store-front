@@ -67,8 +67,26 @@ APP.serverDB = (function() {
         });
     }
 
+    function getByIdOnServer(id,collection,callback) {
+        var uri = 'get-by-id';
+        
+        $.ajax({
+            url : domain + uri,
+            type : 'post',
+            data : {
+                id         : id,
+                collection : collection
+            },
+            success : function(data) {
+                callback(data);
+            }
+        });
+    }
+
     return {
         init : function() {
+            this.inited = true;
+            
             /** subscribe to internal events **/
             APP.subscribe('doc-save',function(doc,collection,callback) {
                 upsertDoc(doc,collection,callback);
@@ -79,7 +97,9 @@ APP.serverDB = (function() {
             });
 
             APP.subscribe('find-on-server', findOnServer);
-        }
+        },
+        inited : false,
+        getByIdOnServer : getByIdOnServer
     };
 
 }());

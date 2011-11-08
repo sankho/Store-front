@@ -21,7 +21,8 @@ APP.clientDB = (function() {
 
     return {
         init : function(options) {
-            
+            this.inited = true;
+
             o  = $.extend({},defaults,options);
             db = o.session ? sessionStorage : localStorage;
         
@@ -36,6 +37,7 @@ APP.clientDB = (function() {
                 saveCollection(collection);
             });
         },
+        inited         : false,
         getCollection  : getCollection,
         saveCollection : saveCollection
     };
