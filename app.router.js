@@ -112,7 +112,7 @@ APP.router = (function() {
 	function pushStateOnClick(e) {
   		$link 	   = $(this);
   		var uri    = $link.attr('href');
-  		var ignore = uri.indexOf('http://') !== -1 || uri.indexOf('#') !== -1 || !uri || $link.hasClass('ignore');
+  		var ignore = !uri || $link.hasClass('ignore') || uri.indexOf('http://') !== -1 || uri.indexOf('#') !== -1;
 
   		if (!ignore) {
   			e.preventDefault();
