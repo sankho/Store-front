@@ -17,10 +17,25 @@ APP.serverDB = (function() {
             success : function(data) {
                 console.log('Server Response to Upsertion... ', data);
                 if (data.success) {
-                    APP.collections[collection][doc._id]._id = data.doc._id;
+                    /* need to figure out how to
+                       update local data in both memory
+                       and clientDB library
+
+                    var oldDocs = doc;
+                    var docs    = data.doc;
+                    if (!data.doc.length) {
+                        docs    = [docs];
+                        oldDocs = [oldDocs];
+                    }
+                    for (var i=0; i<docs.length; i++) {
+                        var doc = docs[i];
+                        var _collection = APP.clientDB.getCollection(collection);
+                        _collection[doc._id]._id = data.doc._id;
+                        APP.publish('server-upsert',[data.doc,doc]);
+                    }
                     APP.clientDB.saveCollection(collection);
-                    APP.publish('server-upsert',[data.doc,doc]);
-                    typeof callback === 'function' ? callback() : null;
+                    //*/
+                    typeof callback === 'function' ? callback(data.doc) : null;
                 }
             }
         });

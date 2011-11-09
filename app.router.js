@@ -196,7 +196,6 @@ APP.router = (function() {
 
 		getUri : function() {
 			return _uri;
-			o.handleUriChange(uri);
 		}
 
 	};

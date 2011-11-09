@@ -10,17 +10,25 @@ APP.baseModel = function() {
         if (this.doc) {
             var collection = APP.clientDB.getCollection(this.collection);
 
-            /** this needs some major love. when you're feeling smarter that is. */
-            if (!this.doc._id) {
-                // might want to find something other than sha256. shorter, even.
-                //this.doc._id = 'new_' + Sha256.hash(Math.floor(Math.random()*999));
-                this.doc._id = 'new_' + Math.floor(Math.random()*999);
-                // probably should check if this ID exists elsewhere first, meh
+            var docs = this.doc;
+
+            if (!APP.isArray(this.doc)) {
+                docs = [this.doc];
             }
 
-            APP.collections[this.collection][this.doc._id] = this.doc;
+            for (var i = 0; i < docs.length; i++) {
+                var doc = docs[i];
 
-            APP.publish('doc-save',[this.doc,this.collection,callback]);
+                /** this needs some major love. when you're feeling smarter that is. */
+                if (!doc._id) {
+                    // might want to find something other than sha256. shorter, even.
+                    //this.doc._id = 'new_' + Sha256.hash(Math.floor(Math.random()*999));
+                    doc._id = 'new_' + Math.floor(Math.random()*999);
+                    // probably should check if this ID exists elsewhere first, meh
+                }
+            }
+
+            APP.publish('doc-save',[docs,this.collection,callback]);
         }
     }
 
@@ -51,7 +59,6 @@ APP.baseModel = function() {
     }
 
     this.findOnServer = function(args,callback) {
-        console.log(args,this.collection)
         APP.publish('find-on-server',[args,this.collection,function(docs) {
             typeof callback === 'function' ? callback(docs) : '';
         }]);

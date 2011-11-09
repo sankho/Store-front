@@ -13,6 +13,11 @@ var APP = (function(config) {
 	    namespace   : 'appStorage_'
 	};
 
+	api.isArray = function(obj) {
+		//returns true is it is an array
+		return obj.constructor.toString().indexOf("Array") !== -1;
+	}
+
 	api.config = function(config) {
 		api = $.extend(api,config);
 		return api;
