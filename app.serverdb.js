@@ -17,6 +17,14 @@ APP.serverDB = (function() {
             success : function(data) {
                 console.log('Server Response to Upsertion... ', data);
                 if (data.success) {
+                    var docs = data.doc;
+                    for (var i=0; i<docs.length; i++) {
+                        var doc = docs[i];
+                        APP.collections[collection] = APP.collections[collection] || {};
+                        APP.collections[collection][doc._id] = doc;
+                    }
+                    typeof callback === 'function' ? callback(data.doc) : null;
+
                     /* need to figure out how to
                        update local data in both memory
                        and clientDB library
@@ -35,7 +43,6 @@ APP.serverDB = (function() {
                     }
                     APP.clientDB.saveCollection(collection);
                     //*/
-                    typeof callback === 'function' ? callback(data.doc) : null;
                 }
             }
         });
@@ -77,7 +84,13 @@ APP.serverDB = (function() {
                 collection : collection
             },
             success : function(data) {
-                callback(data.doc);
+                var docs = data.doc;
+                for (var i=0; i<docs.length; i++) {
+                    var doc = docs[i];
+                    APP.collections[collection] = APP.collections[collection] || {}; 
+                    APP.collections[collection][doc._id] = doc;
+                }
+                callback(docs);
             }
         });
     }
@@ -93,6 +106,10 @@ APP.serverDB = (function() {
                 collection : collection
             },
             success : function(data) {
+                if (data._id) {
+                    APP.collections[collection] = APP.collections[collection] || {};
+                    APP.collections[collection][data._id] = data;
+                }
                 callback(data);
             }
         });

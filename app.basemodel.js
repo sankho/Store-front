@@ -8,8 +8,8 @@ APP.baseModel = function() {
 
     this.save = function(callback) {
         if (this.doc) {
-            var collection = APP.clientDB.getCollection(this.collection);
-
+            APP.collections[this.collection] = APP.collections[this.collection] || {};
+            
             var docs = this.doc;
 
             if (!APP.isArray(this.doc)) {
@@ -26,6 +26,8 @@ APP.baseModel = function() {
                     doc._id = 'new_' + Math.floor(Math.random()*999);
                     // probably should check if this ID exists elsewhere first, meh
                 }
+
+                APP.collections[this.collection][doc._id] = doc;
             }
 
             APP.publish('doc-save',[docs,this.collection,callback]);
@@ -54,8 +56,35 @@ APP.baseModel = function() {
         }
     }
 
-    this.find = function(args) {
-        // collection search.
+    this.find = function(args,toServer,callback) {
+        if (typeof toServer === 'function' && typeof callback === 'undefined') {
+            callback = toServer;
+        } else if (toServer === true) {
+            return APP.publish('find-on-server',[args,this.collection,callback]);
+        }
+
+        var collection = APP.collections[this.collection];
+        var items      = [];
+
+        // nice programming, smart guy
+        for (item in collection) {
+            var addItem = true;
+            var item    = collection[item];
+            for (arg in args) {
+                if (item[arg] !== args[arg]) {
+                    addItem = false;
+                }
+            }
+            if (addItem) {
+                items.push(item);
+            }
+        }
+
+        if (items.length > 0) {
+            callback(items);
+        } else {
+            return APP.publish('find-on-server',[args,this.collection,callback]);
+        }
     }
 
     this.findOnServer = function(args,callback) {
