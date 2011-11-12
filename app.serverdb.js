@@ -49,14 +49,14 @@ APP.serverDB = (function() {
 
     };
 
-    function removeDoc(_id,collection) {
+    function removeDoc(id,collection) {
         var uri = 'remove';
 
         $.ajax({
             url : domain + uri,
             type : 'post',
             data : {
-                doc_id     : _id,
+                id         : id,
                 collection : collection
             },
             success : function(data) {
@@ -106,7 +106,7 @@ APP.serverDB = (function() {
                 collection : collection
             },
             success : function(data) {
-                if (data._id) {
+                if (data && data._id) {
                     APP.collections[collection] = APP.collections[collection] || {};
                     APP.collections[collection][data._id] = data;
                 }

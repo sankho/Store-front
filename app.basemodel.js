@@ -21,10 +21,9 @@ APP.baseModel = function() {
 
                 /** this needs some major love. when you're feeling smarter that is. */
                 if (!doc._id) {
-                    // might want to find something other than sha256. shorter, even.
-                    //this.doc._id = 'new_' + Sha256.hash(Math.floor(Math.random()*999));
-                    doc._id = 'new_' + Math.floor(Math.random()*999);
                     // probably should check if this ID exists elsewhere first, meh
+                    // maybe a recursive function
+                    doc._id = 'new_' + Math.floor(Math.random()*999);
                 }
 
                 APP.collections[this.collection][doc._id] = doc;
@@ -34,11 +33,15 @@ APP.baseModel = function() {
         }
     }
 
-    this.remove = function() {
+    this.remove = function(callback) {
         delete APP.collections[this.collection][this.doc._id];
         APP.publish('doc-remove',[this.doc._id,this.collection]);
+        callback(this.doc);
     }
 
+    // this needs to be sorted out better.
+    // the basemodel should never directly be accessing
+    // the server or clientDB modules.
     this.getById = function(_id,callback) {
         var self       = this;
         var collection = APP.collections[self.collection];
