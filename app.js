@@ -1,12 +1,12 @@
 var APP = (function(config) { 
 	
-	Object.prototype.size = function() {
-    	var size = 0, key;
-    	for (key in this) {
-    	    if (this.hasOwnProperty(key)) size++;
-    	}
-    	return size;
-	};
+	// Object.prototype.size = function() {
+ //    	var size = 0, key;
+ //    	for (key in this) {
+ //    	    if (this.hasOwnProperty(key)) size++;
+ //    	}
+ //    	return size;
+	// };
 
 	var api = {
 	    collections : {},
