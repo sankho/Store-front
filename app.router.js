@@ -60,6 +60,7 @@ APP.router = (function() {
 
 		if (route.preLoad) {
 			route.preLoad(function(data) {
+				APP.router.pageData = data;
 				o.handleUriChange(uri,route,data);
 			});
 		} else {
@@ -120,7 +121,7 @@ APP.router = (function() {
 	
 			var stateObj = {
 				title : title,
-				url   : uri
+				url   : uri + window.location.search
 			};
 	
   			window.history.pushState(stateObj, title, uri);
@@ -137,7 +138,7 @@ APP.router = (function() {
 		} else {
 			var stateObj = {
 				title : document.title,
-				url   : uri
+				url   : uri + window.location.search
 			};
 			window.history.replaceState(stateObj,document.title,uri);
 		}
@@ -185,7 +186,7 @@ APP.router = (function() {
 				title = title || uri;
 				var stateObj = {
 					title : title,
-					url   : uri
+					url   : uri + window.location.search
 				};
 	  			window.history.pushState(stateObj, title, uri);
 			} else if (o.useHash) {
