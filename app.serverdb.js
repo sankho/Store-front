@@ -49,20 +49,20 @@ APP.serverDB = (function() {
 
     };
 
-    function removeDoc(id,collection) {
+    function removeDocs(docs,collection) {
         var uri = 'remove';
-
+        
         $.ajax({
             url : domain + uri,
             type : 'post',
             data : {
-                id         : id,
-                collection : collection
+                docs         : docs,
+                collection   : collection
             },
             success : function(data) {
-                console.log('Server Response to Removal... ', data);
+                //console.log('Server Response to Removal... ', data);
 
-                APP.publish('server-remove',[_id,collection]);
+                APP.publish('server-remove',[docs,collection]);
             }
         });
     };
@@ -124,8 +124,8 @@ APP.serverDB = (function() {
                 upsertDoc(doc,collection,callback);
             });
         
-            APP.subscribe('doc-remove',function(doc_id,collection) {
-                removeDoc(doc_id,collection);
+            APP.subscribe('doc-remove',function(docs,collection) {
+                removeDocs(docs,collection);
             });
 
             APP.subscribe('find-on-server', findOnServer);

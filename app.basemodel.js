@@ -34,9 +34,21 @@ APP.baseModel = function() {
     }
 
     this.remove = function(callback) {
-        delete APP.collections[this.collection][this.doc._id];
-        APP.publish('doc-remove',[this.doc._id,this.collection]);
-        callback(this.doc);
+        var docs = this.doc;
+        
+        if (!APP.isArray(docs)) {
+            docs = [this.doc];
+        }
+
+        console.log('attempting to remove ', docs, this);
+        
+        for (var i = 0; i < docs.length; i++) {
+            delete APP.collections[this.collection][docs[i]._id];
+        }
+
+        APP.publish('doc-remove',[docs,this.collection]);
+
+        typeof callback === 'function' ? callback(docs) : null;
     }
 
     // this needs to be sorted out better.
@@ -66,6 +78,14 @@ APP.baseModel = function() {
             return APP.publish('find-on-server',[args,this.collection,callback]);
         }
 
+        return APP.publish('find-on-server',[args,this.collection,callback]);
+
+        /*
+         * leaving the internal collection search out for now.
+         * Need to analyze each "find" to see if it's been done yet
+         * or not. If it's been done; then records should already be
+         * stored internally.
+
         var collection = APP.collections[this.collection];
         var items      = [];
 
@@ -88,6 +108,7 @@ APP.baseModel = function() {
         } else {
             return APP.publish('find-on-server',[args,this.collection,callback]);
         }
+        //*/
     }
 
     this.findOnServer = function(args,callback) {
