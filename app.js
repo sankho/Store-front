@@ -29,6 +29,25 @@ var APP = (function(config) {
 	    );
 	}
 
+    /**
+     * Returns the number of pixels from the left which the user has scrolled.
+     *
+     * @returns {Number} The number of pixels scrolled.
+     */
+    api.countScrollX = function () {
+        return window.pageXOffset || window.scrollX || document.body.scrollLeft || document.documentElement.scrollLeft;
+    };
+ 
+    /**
+     * Returns the number of pixels from the top which the user has scrolled.
+     *
+     * @returns {Number} The number of pixels scrolled.
+     */
+    api.countScrollY = function () {
+        return window.pageYOffset || window.scrollY || document.body.scrollTop || document.documentElement.scrollTop;
+    };
+ 
+
 	/*	
 	
 		jQuery pub/sub plugin by Peter Higgins (dante@dojotoolkit.org)
