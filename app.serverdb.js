@@ -22,27 +22,12 @@ APP.serverDB = (function() {
                         var doc = docs[i];
                         APP.collections[collection] = APP.collections[collection] || {};
                         APP.collections[collection][doc._id] = doc;
-                    }
-                    typeof callback === 'function' ? callback(data.doc) : null;
 
-                    /* need to figure out how to
-                       update local data in both memory
-                       and clientDB library
-
-                    var oldDocs = doc;
-                    var docs    = data.doc;
-                    if (!data.doc.length) {
-                        docs    = [docs];
-                        oldDocs = [oldDocs];
+                        if (doc.__client_id && APP.collections[collection][doc.__client_id]) {
+                            delete APP.collections[collection][doc.__client_id];
+                        }
                     }
-                    for (var i=0; i<docs.length; i++) {
-                        var doc = docs[i];
-                        var _collection = APP.clientDB.getCollection(collection);
-                        _collection[doc._id]._id = data.doc._id;
-                        APP.publish('server-upsert',[data.doc,doc]);
-                    }
-                    APP.clientDB.saveCollection(collection);
-                    //*/
+                    typeof callback === 'function' ? callback(docs) : null;
                 }
             }
         });
