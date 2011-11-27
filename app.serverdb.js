@@ -4,14 +4,14 @@ APP.serverDB = (function() {
     
     var domain = '/';
 
-    function upsertDoc(doc,collection,callback) {
+    function upsertDoc(oldDocs, collection, callback) {
         var uri = 'upsert';
 
         $.ajax({
             url : domain + uri,
             type : 'post',
             data : {
-                doc        : doc,
+                doc        : oldDocs,
                 collection : collection
             },
             success : function(data) {
@@ -28,6 +28,8 @@ APP.serverDB = (function() {
                         }
                     }
                     typeof callback === 'function' ? callback(docs) : null;
+
+                    APP.publish('server-upsert', [oldDocs, docs, collection]);
                 }
             }
         });

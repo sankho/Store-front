@@ -29,13 +29,17 @@ APP.clientDB = (function() {
             namespace     = APP.namespace;
             
             /** subscribe to internal events **/
-            APP.subscribe('doc-save',function(doc,collection) {
+            APP.subscribe('doc-save', function(doc, collection) {
                 saveCollection(collection);
             });
         
-            APP.subscribe('doc-remove',function(doc_id,collection) {
+            APP.subscribe('doc-remove', function(doc_id, collection) {
                 saveCollection(collection);
             });
+
+            APP.subscribe('server-upsert', function(oldDocs, newDocs, collection) {
+                saveCollection(collection);
+            })
         },
         inited         : false,
         getCollection  : getCollection,
