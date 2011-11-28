@@ -78,14 +78,14 @@ APP.baseModel = function() {
             return APP.publish('find-on-server',[args,this.collection,callback]);
         }
 
-//        return APP.publish('find-on-server',[args,this.collection,callback]);
+        return APP.publish('find-on-server',[args,this.collection,callback]);
 
         /*
          * leaving the internal collection search out for now.
          * Need to analyze each "find" to see if it's been done yet
          * or not. If it's been done; then records should already be
          * stored internally.
-         */
+         *
         
         var collection = APP.collections[this.collection];
         var items      = [];
